@@ -17,86 +17,151 @@ class Dashboard extends CI_Controller
 
     public function index()
     {
-        $data['keywords'] = $this->DashboardModel->select('id');
+        // $data['keywords'] = $this->DashboardModel->select('id');
+        $file = fopen("assets/main.csv","r");
+        $indexdata = array('');
+        while (($row = fgetcsv($file, 0, ",")) !== FALSE) {
+            //var_dump($row[0]);
+            if(!empty($row[0])){
+                array_push($indexdata, $row);
+            }
+        }
+        // var_dump($indexdata);die;
+        $data['keywords'] = $indexdata;
         $this->load->view('keyword/index',$data);
     }
 
     public function show(){
         $id = $this->input->post('id');
-        $keyword = $this->DashboardModel->select_one(array("id"=>$id));
-        if(!empty($keyword)){
-            $response_data = json_decode($keyword['response_data']);
-            $related_keywords_html = "<ul>";
-            foreach ($response_data as $row) {
-                $related_keywords_html .= '<li>'.key($row).'</li><ul>';
-                $subarray = array_values(get_object_vars($row));
-                if(!empty($subarray[0])){
-                    foreach ($subarray[0] as $row) {
-                        $related_keywords_html .= "<li>".$row."</li>";
-                    }
+        $path = "assets/csv/".$id;
+        $indexdata = array('');
+        $heading = array('');
+
+        // var_dump($path);
+        // var_dump(file_exists($path));
+
+        if(file_exists($path)){
+            $file = fopen($path,"r");
+            // var_dump($file);die;
+            $flag = true;
+            while (($row = fgetcsv($file, 0, ",")) !== FALSE) {
+                
+                if(!empty($row[0]) && $flag){
+                    array_push($heading, $row); 
+                    $flag = false;
+                }else{
+                    array_push($indexdata, $row);
                 }
-                $related_keywords_html .="</ul>";
             }
-            $related_keywords_html .="</ul>"; 
         }
+        $count = count($heading);
+        $related_keywords_html = "<ul>";
+        // for($i=0;$i>$count;$i++){
+        $array1 = '';
+        foreach ($indexdata as $row) {
+            // var_dump($row);die;
+            $array1 .= "<li>".$row[0]."</li>";
+            $array2 .= "<li>".$row[1]."</li>";
+            $array3 .= "<li>".$row[2]."</li>";
+            $array4 .= "<li>".$row[3]."</li>";
+            $array5 .= "<li>".$row[4]."</li>";
+            $array6 .= "<li>".$row[5]."</li>";
+            $array7 .= "<li>".$row[6]."</li>";
+            $array8 .= "<li>".$row[7]."</li>";
+            $array9 .= "<li>".$row[8]."</li>";
+        }
+
+        var_dump($array1);die;
+
+        // var_dump($indexdata);die;
+        // $keyword = $this->DashboardModel->select_one(array("id"=>$id));
+        $data = $indexdata;
+        // $data = $this->flip_row_col_array($indexdata);
+        // $related_keywords_html = "<ul>";
+        // $newarray = '';
+        // if(!empty($data)){
+        //     foreach ($data as $row) {
+        //         if(!empty($row[0])){
+        //             // var_dump($row);die;
+
+        //             $related_keywords_html .= "<li>".$row[1]."</li>";
+
+        //             var_dump($row);die;
+        //         }
+        //     }
+        // }
+        // $related_keywords_html .= "<ul>";
+        // var_dump($data);die;
+       
+        // var_dump($related_keywords_html);die;
         echo json_encode(array("result" => true ,"data" => $related_keywords_html));
 
 
     }
 
-    public function download($id){
-         // file name 
-        $filename = 'keyword_'.date('Ymd').'.csv'; 
+    public function download($name){
+        
         header("Content-Description: File Transfer"); 
-        header("Content-Disposition: attachment; filename=$filename"); 
-        header("Content-Type: application/csv; ");
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename='.$name);
+        header('Pragma: no-cache');
+        readfile("assets/csv/".$name);
+
+        //  // file name 
+        // $filename = 'keyword_'.date('Ymd').'.csv'; 
+        // header("Content-Description: File Transfer"); 
+        // header("Content-Disposition: attachment; filename=$filename"); 
+        // header("Content-Type: application/csv; ");
        
-        // get data 
-        // $id = $this->input->post('id');
-        $keyword = $this->DashboardModel->select_one(array("id"=>$id));
-        $response_data = json_decode($keyword['response_data']);
-        // file creation 
-        $file = fopen('php://output', 'w');
+        // // get data 
+        // // $id = $this->input->post('id');
+        // $keyword = $this->DashboardModel->select_one(array("id"=>$id));
+        // $response_data = json_decode($keyword['response_data']);
+        // // file creation 
+        // $file = fopen('php://output', 'w');
      
         
-        $heading = array();
-        $subkeywords = array();
-        foreach ($response_data as $row) {
-            array_push($heading, strtoupper(key($row)));
+        // $heading = array();
+        // $subkeywords = array();
+        // foreach ($response_data as $row) {
+        //     array_push($heading, strtoupper(key($row)));
 
-            // $related_keywords_html .= '<li>'.key($row).'</li><ul>';
-            $subarray = array_values(get_object_vars($row));
-            if(!empty($subarray[0])){
-                array_push($subkeywords, $subarray[0]);
-                //foreach ($subarray[0] as $row) {
-                    // $related_keywords_html .= "<li>".$row."</li>";
-                //}
-            }else{
-                array_push($subkeywords, array(0 =>'',1 =>'',2=>'',3=>'',4=>'',5=>'',6=>'',7=>''));
-            }
-            // $related_keywords_html .="</ul>";
-        }
+        //     // $related_keywords_html .= '<li>'.key($row).'</li><ul>';
+        //     $subarray = array_values(get_object_vars($row));
+        //     if(!empty($subarray[0])){
+        //         array_push($subkeywords, $subarray[0]);
+        //         //foreach ($subarray[0] as $row) {
+        //             // $related_keywords_html .= "<li>".$row."</li>";
+        //         //}
+        //     }else{
+        //         array_push($subkeywords, array(0 =>'',1 =>'',2=>'',3=>'',4=>'',5=>'',6=>'',7=>''));
+        //     }
+        //     // $related_keywords_html .="</ul>";
+        // }
        
-        $header = $heading; 
-        fputcsv($file, $header);
-        $rowwisedata = $this->flip_row_col_array($subkeywords);
-        foreach($rowwisedata as $row){ 
-            fputcsv($file,$row); 
-        }
-        fclose($file); 
-        exit; 
+        // $header = $heading; 
+        // fputcsv($file, $header);
+        // $rowwisedata = $this->flip_row_col_array($subkeywords);
+        // foreach($rowwisedata as $row){ 
+        //     fputcsv($file,$row); 
+        // }
+        // fclose($file); 
+        // exit; 
     }
 
     function flip_row_col_array($array) {
         $out = array();
         foreach ($array as  $rowkey => $row) {
-            foreach($row as $colkey => $col){
-                $out[$colkey][$rowkey]=$col;
+            if(!empty($row)){
+                foreach($row as $colkey => $col){
+                    $out[$colkey][$rowkey]=$col;
+                }
             }
         }
         return $out;
     }
 
+   
     public function raletedKeyword(){
         // var_dump($_POST);
         $this->form_validation->set_error_delimiters('<p style="color:red;">', '</p>');
@@ -139,27 +204,50 @@ class Dashboard extends CI_Controller
                
                 $related_keywords_html = "<h3>Searche Related to ".$keyword."</h3><ul>";
                 $related_keywords = array();
+                $heading = array();
+                $subkeywords = array();
                 foreach ($res as $rows) {
                     $related_keywords_html .= '<li>'.$rows['keyword_data']['keyword'].'</li><ul>';
-                    
+                    array_push($heading,strtoupper($rows['keyword_data']['keyword']));
                     $keyword_row = array();
                     if(!empty($rows['related_keywords'])){
+                        array_push($subkeywords, $rows['related_keywords']);
                         foreach ($rows['related_keywords'] as $row1) {
                             $related_keywords_html .= "<li>".$row1."</li>";
                             array_push($keyword_row,$row1);
                         }
+                    }else{
+                        array_push($subkeywords, array(0 =>'',1 =>'',2=>'',3=>'',4=>'',5=>'',6=>'',7=>''));
                     }
                     array_push($related_keywords, array($rows['keyword_data']['keyword'] => $keyword_row));
                     $related_keywords_html .="</ul>";
                 }
                 $related_keywords_html .="</ul>";
 
-                $insertArr = array(
-                    'keyword_name'  => $keyword,
-                    'response_data' => json_encode($related_keywords)
-                );
-                // var_dump($insertArr);die;
-                $insert_id = $this->DashboardModel->insert($insertArr);
+
+
+                $filename = $keyword.'.csv';
+                $file = fopen('assets/csv/'.$filename, 'a');
+                
+                $mainfile = 'assets/main.csv';
+                $mainrecord = fopen($mainfile, 'a');
+                fputcsv($mainrecord,array($keyword,$filename));
+                fclose($mainrecord);
+
+                $header = $heading; 
+                fputcsv($file, $header);
+                $rowwisedata = $this->flip_row_col_array($subkeywords);
+                foreach($rowwisedata as $row){ 
+                    fputcsv($file,$row); 
+                }
+                fclose($file); 
+
+                // $insertArr = array(
+                //     'keyword_name'  => $keyword,
+                //     'response_data' => json_encode($related_keywords)
+                // );
+                // // var_dump($insertArr);die;
+                // $insert_id = $this->DashboardModel->insert($insertArr);
                 echo json_encode(array("result" => true,"data" => $related_keywords_html));
                 return;
             } catch (RestClientException $e) {

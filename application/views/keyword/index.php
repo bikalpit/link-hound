@@ -117,18 +117,25 @@
         <h5 class="mr-5">PREVIOUS SEARCHES</h5>
         <table style="width: 100%;">
           <?php 
+          // var_dump($keywords);die;
           if(!empty($keywords)){
-            foreach ($keywords as $row) { ?>
-              <tr>
-                <td><label><?php echo $row['keyword_name']; ?></label></td>
-                <td>
-                    <a href="<?php echo base_url();?>Dashboard/download/<?php echo $row['id']; ?>" class="btn btn-link" >Download</a> |
-                    <button class="btn btn-link" onclick="seeResultsRow(<?php echo $row['id']; ?>)"> See Results</button>
-                </td>
-              </tr>
-            <?php  
+            foreach ($keywords as $row) { 
+              // var_dump($row);die;
+              if(!empty($row)){
+                ?>
+                <tr>
+                  <td><label><?php echo $row[0]; ?></label></td>
+                  <td>
+                    <!-- onclick="donwloadRow('<?php //echo $row[1]; ?>')" -->
+                      <a  href="<?php echo base_url('Dashboard/download/'.$row[1]); ?>" class="btn btn-link" >Download</a> |
+                      <button class="btn btn-link" onclick="seeResultsRow('<?php echo $row[1]; ?>')"> See Results</button>
+                  </td>
+                </tr>
+                <?php 
+              } 
             }
           } ?>
+          
         </table>
         <div id="error-msg"></div>
       </div>
@@ -181,11 +188,11 @@
     $("#error-keyword").html("");
   }
 
-  // function donwloadRow(id){
+  // function donwloadRow(name){
   //   $.ajax({
-  //       url:"<?php //echo base_url();?>Dashboard/download",
+  //       url:"<?php //echo base_url();?>Dashboard/download/",
   //       method:"POST",
-  //       data:{id:id},
+  //       data:{name:name},
   //       success:function(res){
           
   //       } 
