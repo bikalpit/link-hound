@@ -17,83 +17,59 @@ class Dashboard extends CI_Controller
 
     public function index()
     {
+       $this->load->view('keyword/index');
+    }
+
+    public function datatable(){
         // $data['keywords'] = $this->DashboardModel->select('id');
-        $file = fopen("assets/main.csv","r");
-        $indexdata = array('');
-        while (($row = fgetcsv($file, 0, ",")) !== FALSE) {
-            //var_dump($row[0]);
-            if(!empty($row[0])){
-                array_push($indexdata, $row);
+      $path = "data/main_relatedkeywords.txt";
+      if(file_exists($path)){
+        $file = fopen($path,"r");
+        $indexdata = array();
+        while (($row = fgetcsv($file,0, "|")) !== FALSE) {
+            
+            if(!empty($row)){ ?>
+                <tr>
+                    <td><label><?php echo $row[0]; ?></label></td>
+                    <td>
+                        <a href="<?php echo base_url('Dashboard/download/'.$row[1]); ?>" class="btn btn-link" >Download</a> |
+                       <button class="btn btn-link" onclick="seeResultsRow('<?php echo $row[1]; ?>','<?php echo $row[0]; ?>')"> See Results</button>
+                    </td>
+                </tr>
+            <?php
             }
+           
         }
+      }
         // var_dump($indexdata);die;
-        $data['keywords'] = $indexdata;
-        $this->load->view('keyword/index',$data);
+        
     }
 
     public function show(){
-        $id = $this->input->post('id');
-        $path = "assets/csv/".$id;
-        $indexdata = array('');
-        $heading = array('');
-
-        // var_dump($path);
-        // var_dump(file_exists($path));
+        $filename = $this->input->post('name');
+        $keyword = $this->input->post('key');
+        $path = "data/related-keywords/".$filename;
+        $related_keywords_html = '';
 
         if(file_exists($path)){
             $file = fopen($path,"r");
-            // var_dump($file);die;
-            $flag = true;
-            while (($row = fgetcsv($file, 0, ",")) !== FALSE) {
-                
-                if(!empty($row[0]) && $flag){
-                    array_push($heading, $row); 
-                    $flag = false;
-                }else{
-                    array_push($indexdata, $row);
+            $row = fgetcsv($file, 0, "|");
+            // var_dump($row);
+            $related_keywords_html .= "<h3>Related to ".$keyword."</h3><ul>";
+            $related_keywords_html .= '<li>'.$keyword.'</li><ul>';
+
+            if(!empty($row)){
+                foreach ($row as $r) {
+                    $related_keywords_html .='<li>'.$r.'</li>';
                 }
             }
+            $related_keywords_html .="</ul>";
+            $related_keywords_html .="</ul>";
+        }else{
+            $related_keywords_html = "File not found.";
         }
-        $count = count($heading);
-        $related_keywords_html = "<ul>";
-        // for($i=0;$i>$count;$i++){
-        $array1 = '';
-        foreach ($indexdata as $row) {
-            // var_dump($row);die;
-            $array1 .= "<li>".$row[0]."</li>";
-            $array2 .= "<li>".$row[1]."</li>";
-            $array3 .= "<li>".$row[2]."</li>";
-            $array4 .= "<li>".$row[3]."</li>";
-            $array5 .= "<li>".$row[4]."</li>";
-            $array6 .= "<li>".$row[5]."</li>";
-            $array7 .= "<li>".$row[6]."</li>";
-            $array8 .= "<li>".$row[7]."</li>";
-            $array9 .= "<li>".$row[8]."</li>";
-        }
+        
 
-        var_dump($array1);die;
-
-        // var_dump($indexdata);die;
-        // $keyword = $this->DashboardModel->select_one(array("id"=>$id));
-        $data = $indexdata;
-        // $data = $this->flip_row_col_array($indexdata);
-        // $related_keywords_html = "<ul>";
-        // $newarray = '';
-        // if(!empty($data)){
-        //     foreach ($data as $row) {
-        //         if(!empty($row[0])){
-        //             // var_dump($row);die;
-
-        //             $related_keywords_html .= "<li>".$row[1]."</li>";
-
-        //             var_dump($row);die;
-        //         }
-        //     }
-        // }
-        // $related_keywords_html .= "<ul>";
-        // var_dump($data);die;
-       
-        // var_dump($related_keywords_html);die;
         echo json_encode(array("result" => true ,"data" => $related_keywords_html));
 
 
@@ -102,70 +78,31 @@ class Dashboard extends CI_Controller
     public function download($name){
         
         header("Content-Description: File Transfer"); 
-        header('Content-Type: application/csv');
+        header('Content-Type: application/txt');
         header('Content-Disposition: attachment; filename='.$name);
         header('Pragma: no-cache');
-        readfile("assets/csv/".$name);
+        readfile("data/related-keywords/".$name);
 
-        //  // file name 
-        // $filename = 'keyword_'.date('Ymd').'.csv'; 
-        // header("Content-Description: File Transfer"); 
-        // header("Content-Disposition: attachment; filename=$filename"); 
-        // header("Content-Type: application/csv; ");
-       
-        // // get data 
-        // // $id = $this->input->post('id');
-        // $keyword = $this->DashboardModel->select_one(array("id"=>$id));
-        // $response_data = json_decode($keyword['response_data']);
-        // // file creation 
-        // $file = fopen('php://output', 'w');
-     
-        
-        // $heading = array();
-        // $subkeywords = array();
-        // foreach ($response_data as $row) {
-        //     array_push($heading, strtoupper(key($row)));
-
-        //     // $related_keywords_html .= '<li>'.key($row).'</li><ul>';
-        //     $subarray = array_values(get_object_vars($row));
-        //     if(!empty($subarray[0])){
-        //         array_push($subkeywords, $subarray[0]);
-        //         //foreach ($subarray[0] as $row) {
-        //             // $related_keywords_html .= "<li>".$row."</li>";
-        //         //}
-        //     }else{
-        //         array_push($subkeywords, array(0 =>'',1 =>'',2=>'',3=>'',4=>'',5=>'',6=>'',7=>''));
-        //     }
-        //     // $related_keywords_html .="</ul>";
-        // }
-       
-        // $header = $heading; 
-        // fputcsv($file, $header);
-        // $rowwisedata = $this->flip_row_col_array($subkeywords);
-        // foreach($rowwisedata as $row){ 
-        //     fputcsv($file,$row); 
-        // }
-        // fclose($file); 
-        // exit; 
     }
 
-    function flip_row_col_array($array) {
-        $out = array();
-        foreach ($array as  $rowkey => $row) {
-            if(!empty($row)){
-                foreach($row as $colkey => $col){
-                    $out[$colkey][$rowkey]=$col;
-                }
-            }
-        }
-        return $out;
-    }
+    // function flip_row_col_array($array) {
+    //     $out = array();
+    //     foreach ($array as  $rowkey => $row) {
+    //         if(!empty($row)){
+    //             foreach($row as $colkey => $col){
+    //                 $out[$colkey][$rowkey]=$col;
+    //             }
+    //         }
+    //     }
+    //     return $out;
+    // }
 
    
     public function raletedKeyword(){
-        // var_dump($_POST);
+        
         $this->form_validation->set_error_delimiters('<p style="color:red;">', '</p>');
         $this->form_validation->set_rules('keyword', 'keyword', 'required');
+
         if ($this->form_validation->run() == FALSE) {
             $errors = validation_errors();
             echo json_encode(array('result' => false,'data'=>$errors));
@@ -175,86 +112,252 @@ class Dashboard extends CI_Controller
 
             // You can download this file from here https://cdn.dataforseo.com/v3/examples/php/php_RestClient.zip
             // require('RestClient.php');
-
             $api_url = 'https://api.dataforseo.com/';
-            // Instead of 'login' and 'password' use your credentials from https://app.dataforseo.com/api-dashboard
-            $client = new RestClient($api_url, null, 'rashmitag205@gmail.com', '395109962484d5a1');
 
-            $post_array = array();
+            // Instead of 'login' and 'password' use your credentials from https://app.dataforseo.com/api-dashboard
+            $client = new RestClient($api_url, null, API_LOGIN, API_PASSWORD);
+            // $client = new RestClient($api_url, null, 'rashmita.gangani@gmail.com', 'cd9a9515025ac3ee');
+
             // simple way to set a task
+            $post_array = array();
             $post_array[] = array(
-               // "keyword" => "phone",
                "keyword" => $keyword,
                "language_name" => "English",
                "location_name" => 'INDIA',
-               // "filters" => [
-               //    ["keyword_data.impressions_info.ad_position_average", ">", 1],
-               //    "and",
-               //    [
-               //       ["keyword_data.impressions_info.cpc_max", "<", 0.5],
-               //       "or",
-               //       ["keyword_data.impressions_info.daily_clicks_max", ">=", 10]
-               //    ]
-               // ]
             );
             try {
+                $related_keywords_html = '';
                 // POST /v3/dataforseo_labs/related_keywords/live
                 $result = $client->post('/v3/dataforseo_labs/related_keywords/live', $post_array);
-                $res = $result['tasks'][0]['result'][0]['items'];
-               
-                $related_keywords_html = "<h3>Searche Related to ".$keyword."</h3><ul>";
-                $related_keywords = array();
-                $heading = array();
-                $subkeywords = array();
-                foreach ($res as $rows) {
-                    $related_keywords_html .= '<li>'.$rows['keyword_data']['keyword'].'</li><ul>';
-                    array_push($heading,strtoupper($rows['keyword_data']['keyword']));
-                    $keyword_row = array();
-                    if(!empty($rows['related_keywords'])){
-                        array_push($subkeywords, $rows['related_keywords']);
-                        foreach ($rows['related_keywords'] as $row1) {
-                            $related_keywords_html .= "<li>".$row1."</li>";
-                            array_push($keyword_row,$row1);
-                        }
-                    }else{
-                        array_push($subkeywords, array(0 =>'',1 =>'',2=>'',3=>'',4=>'',5=>'',6=>'',7=>''));
-                    }
-                    array_push($related_keywords, array($rows['keyword_data']['keyword'] => $keyword_row));
-                    $related_keywords_html .="</ul>";
-                }
-                $related_keywords_html .="</ul>";
-
-
-
-                $filename = $keyword.'.csv';
-                $file = fopen('assets/csv/'.$filename, 'a');
-                
-                $mainfile = 'assets/main.csv';
-                $mainrecord = fopen($mainfile, 'a');
-                fputcsv($mainrecord,array($keyword,$filename));
-                fclose($mainrecord);
-
-                $header = $heading; 
-                fputcsv($file, $header);
-                $rowwisedata = $this->flip_row_col_array($subkeywords);
-                foreach($rowwisedata as $row){ 
-                    fputcsv($file,$row); 
-                }
-                fclose($file); 
-
-                // $insertArr = array(
-                //     'keyword_name'  => $keyword,
-                //     'response_data' => json_encode($related_keywords)
+                // $result = array(
+                //   "version"=> "0.1.20200923",
+                //   "status_code"=>20000,
+                //   "status_message"=> "Ok.",
+                //   "time"=>"0.0516 sec.",
+                //   "cost"=>0.0109,
+                //   "tasks_count"=> 1,
+                //   "tasks_error"=> 0,
+                //   "tasks"=>array(
+                //       0 => array(
+                //             "id" =>"10130955-2367-0124-0000-f7e92e747ab7",
+                //             "status_code" =>20000,
+                //             "status_message" =>"Ok.",
+                //             "time" =>"0.0276 sec.",
+                //             "cost" => 0.0109,
+                //             "result_count" =>1,
+                //             "path" =>array(
+                //               0=>"v3",
+                //               1=> "dataforseo_labs",
+                //               2=> "related_keywords",
+                //               3=>"live"
+                //             ),
+                //             "data"=>
+                //             array(
+                //               "api" => "dataforseo_labs",
+                //               "function" => "related_keywords",
+                //               "keyword" => "cricket",
+                //               "language_name" => "English",
+                //               "location_name"=> "INDIA"
+                //             ),
+                //             "result"=>
+                //               array(
+                //                 0 =>
+                //                 array(
+                //                   "seed_keyword"=>"cricket",
+                //                   "seed_keyword_data"=>NULL,
+                //                   "location_code"=>2356,
+                //                   "language_code"=>"en",
+                //                   "total_count"=>9,
+                //                   "items_count"=>9,
+                //                   "items" =>
+                //                   array(
+                //                     0=>
+                //                     array(
+                //                       "keyword_data"=>
+                //                       array(
+                //                         "keyword"=>"cricket",
+                //                         "location_code"=>2356,
+                //                         "language_code"=>"en",
+                //                         "keyword_info"=>
+                //                         array(
+                //                           "last_updated_time"=> "2020-09-25T10:52:20.6967677Z",
+                //                           "competition"=>0.012620933765024,
+                //                           "cpc"=>0.252268,
+                //                           "search_volume"=>7480000,
+                //                           "categories"=>
+                //                           array(
+                //                             0=>10013,
+                //                             1=>10014,
+                //                             2=>10108,
+                //                             3=>10110,
+                //                             4=>10114,
+                //                             5=>10597,
+                //                             6=>13605,
+                //                             7=>13607
+                //                           ),
+                //                           "monthly_searches"=>
+                //                           array(
+                //                             0=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>8,
+                //                               "search_volume"=>2740000
+                //                             ),
+                //                             1=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>7,
+                //                               "search_volume"=>2240000
+                //                             ),
+                //                             2=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>6,
+                //                               "search_volume"=>1220000
+                //                             ),
+                //                             3=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>5,
+                //                               "search_volume"=>1500000
+                //                             ),
+                //                             4=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>4,
+                //                               "search_volume"=>1500000
+                //                             ),
+                //                             5=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>3,
+                //                               "search_volume"=>5000000
+                //                             ),
+                //                             6=>
+                //                             array(
+                //                               "year"=> 2020,
+                //                               "month"=>2,
+                //                               "search_volume"=>13600000
+                //                             ),
+                //                             7=>
+                //                             array(
+                //                               "year"=>2020,
+                //                               "month"=>1,
+                //                               "search_volume"=>20400000
+                //                             ),
+                //                             8=>
+                //                             array(
+                //                               "year"=> 2019,
+                //                               "month"=> 12,
+                //                               "search_volume"=> 11100000
+                //                             ),
+                //                             9=>
+                //                             array(
+                //                               "year"=> 2019,
+                //                               "month"=> 11,
+                //                               "search_volume"=>9140000
+                //                             ),
+                //                             10=>
+                //                             array(
+                //                               "year"=>2019,
+                //                               "month"=>10,
+                //                               "search_volume"=> 9140000
+                //                             ),
+                //                             11=>
+                //                             array(
+                //                               "year"=>2019,
+                //                               "month"=> 9,
+                //                               "search_volume"=>
+                //                               6120000
+                //                             )
+                //                           )
+                //                         ),
+                //                         "impressions_info"=>
+                //                         array(
+                //                           "last_updated_time"=> "2020-09-24T12:00:06.6529367Z",
+                //                           "bid"=>999,
+                //                           "match_type"=>"exact",
+                //                           "ad_position_min"=>1.11,
+                //                           "ad_position_max"=> 1,
+                //                           "ad_position_average"=>1.06,
+                //                           "cpc_min"=>4.14,
+                //                           "cpc_max"=> 5.06,
+                //                           "cpc_average"=> 4.6,
+                //                           "daily_impressions_min"=>2226.92,
+                //                           "daily_impressions_max"=>2721.79,
+                //                           "daily_impressions_average"=>2474.35,
+                //                           "daily_clicks_min"=>175.85,
+                //                           "daily_clicks_max"=>214.93,
+                //                           "daily_clicks_average"=>195.39,
+                //                           "daily_cost_min"=>809.47,
+                //                           "daily_cost_max"=>989.36,
+                //                           "daily_cost_average"=>899.41
+                //                         )
+                //                       ),
+                //                       "depth"=> 0,
+                //                       "related_keywords"=>
+                //                       array(
+                //                         0=> "cricket score",
+                //                         1=> "cricket live",
+                //                         2=>  "live cricket score cricbuzz",
+                //                         3=> "cricket live score",
+                //                         4=> "cricket news",
+                //                         5=> "live cricket online",
+                //                         6=>  "cricket live video",
+                //                         7=>  "cricket india"
+                //                       )
+                //                     )
+                                    
+                //                   )
+                //                 )
+                //               )
+                //       )
+                //   )
                 // );
-                // // var_dump($insertArr);die;
-                // $insert_id = $this->DashboardModel->insert($insertArr);
+                
+                
+                $res = $result['tasks'][0]['result'][0]['items'][0];
+               
+                if(!empty($res)){
+                    $filename = $keyword.'-'.date('Ymd').'.txt';
+                    if(file_exists('data/related-keywords/'.$filename)){
+                        $file = fopen('data/related-keywords/'.$filename,'w');
+                    }else{
+                         $file = fopen('data/related-keywords/'.$filename,'a');
+                    }
+
+                    $related_keywords_html .= "<h3>Searche Related to ".$keyword."</h3><ul>";
+                    $related_keywords_html .= '<li>'.$res['keyword_data']['keyword'].'</li><ul>';
+                    $related_keywords = isset($res['related_keywords']) ? $res['related_keywords'] : array('');
+
+                    // var_dump($related_keywords);die;
+
+                    if(!empty($related_keywords)){
+                        foreach ($related_keywords as $rows) {
+                            $related_keywords_html .='<li>'.$rows.'</li>';
+                        }
+                        
+                        fputcsv($file,$related_keywords,'|');
+                        fclose($file); 
+                    }
+                    $related_keywords_html .="</ul>";
+                    $related_keywords_html .="</ul>";
+
+                    //row enrty added
+                    $mainfile = 'data/main_relatedkeywords.txt';
+                    $mainrecord = fopen($mainfile, 'a');
+                    fputcsv($mainrecord,array($keyword,$filename),"|");
+                    fclose($mainrecord);
+                }
+
                 echo json_encode(array("result" => true,"data" => $related_keywords_html));
                 return;
+
             } catch (RestClientException $e) {
                // echo "\n";// print "HTTP code: {$e->getHttpCode()}\n";
                // print "Error code: {$e->getCode()}\n";// print "Message: {$e->getMessage()}\n";// print  $e->getTraceAsString();// echo "\n";
 
-               echo json_encode(array("result" => false,"data" => "Something was wrong."));
+               echo json_encode(array("result" => false,"data" => "<p style='color:red;'>Your API login and API password expired.</p>"));
                return;
             }
         }

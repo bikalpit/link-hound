@@ -102,7 +102,7 @@
       
     <div class="row mt-4">
       <div class="col-md-6 pl-0">
-        <form action="" method="post" id="send" class="mb-5">
+        <form action="" method="post" id="send">
           <div class="form-group">
             <label for="">Get Related Keyword:</label>
             <input type="text" class="form-control" id="keyword" placeholder="Keyword" name="keyword">
@@ -111,17 +111,35 @@
           <button type="submit" id="submit"  class="btn btn-primary">Get Related Keyword</button> 
           <button type="button" class="btn btn-default" onclick="resetform()">Reset</button>
         </form>
-        
+
       </div>
-      <div class="col-md-6 " style="padding-top:3%;">
+      <div class="col-md-6 row " style="padding-top:3%;">
         <h5 class="mr-5">PREVIOUS SEARCHES</h5>
-        <table style="width: 100%;" id="data-previous">
+        <table style="width: 100%;">
+          <?php 
+          // var_dump($keywords);die;
+          if(!empty($keywords)){
+            foreach ($keywords as $row) { 
+              // var_dump($row);die;
+              if(!empty($row)){
+                ?>
+                <tr>
+                  <td><label><?php echo $row[0]; ?></label></td>
+                  <td>
+                    <!-- onclick="donwloadRow('<?php //echo $row[1]; ?>')" -->
+                      <a  href="<?php echo base_url('Dashboard/download/'.$row[1]); ?>" class="btn btn-link" >Download</a> |
+                      <button class="btn btn-link" onclick="seeResultsRow('<?php echo $row[1]; ?>')"> See Results</button>
+                  </td>
+                </tr>
+                <?php 
+              } 
+            }
+          } ?>
           
         </table>
         <div id="error-msg"></div>
       </div>
-      <div id="result" class=""></div>
-      
+      <div id="result"></div>
     </div>
     </div>
     
@@ -133,7 +151,6 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    index();
     // $(".loader-wrapper").fadeOut("slow");
     $('#send').on('submit', function(event){
         //alert("hii");
@@ -158,7 +175,6 @@
               var jsonResults =  JSON.parse(res);
               if(jsonResults.result){
                 $("#result").html(jsonResults.data);
-                index();
               }else{
                 $("#error-keyword").html(jsonResults.data);
               }
@@ -166,33 +182,29 @@
         });
     });
   });
-
-  function index(){
-    $.ajax({
-      url:"<?php echo base_url();?>Dashboard/datatable",
-      method:"POST",
-      success:function(res){
-        if(res){
-          $("#data-previous").html(res);
-        }else{
-          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
-        }
-      } 
-    });
-  }
-
   function resetform(){
     $("#keyword").val("");
     $("#result").html("");
     $("#error-keyword").html("");
   }
 
-  function seeResultsRow(name,key){
+  // function donwloadRow(name){
+  //   $.ajax({
+  //       url:"<?php //echo base_url();?>Dashboard/download/",
+  //       method:"POST",
+  //       data:{name:name},
+  //       success:function(res){
+          
+  //       } 
+  //   });
+  // }
+
+  function seeResultsRow(id){
     // console.log(id);
     $.ajax({
         url:"<?php echo base_url();?>Dashboard/show",
         method:"POST",
-        data:{name:name,key:key},
+        data:{id:id},
         beforeSend:function(){
             $(".loader-wrapper").show();
             $(".loader-wrapper").fadeIn("slow");
