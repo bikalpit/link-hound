@@ -20,7 +20,8 @@ What  you have to update before run project?
 
 How you will get these?
 1.first create your account on below link
+https://app.dataforseo.com/register
+2. login in  below link
 	https://app.dataforseo.com/signin
-2. get API login and API password add in below file 
+3.go to API Dashboard and get API login and API password Replace  exiting API_LOGIN and API_PASSWORD with your credentials in below file
 	application/config/constants.php
-	You will get this just after create account
