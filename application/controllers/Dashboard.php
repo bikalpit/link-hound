@@ -10,7 +10,8 @@ class Dashboard extends CI_Controller
         $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
         $this->load->library('email');
-        $this->load->model('DashboardModel');
+        $this->load->helper('common_helper');
+        
         include APPPATH . 'third_party/RestClient.php';
         
     }
@@ -319,7 +320,7 @@ class Dashboard extends CI_Controller
                 $res = $result['tasks'][0]['result'][0]['items'][0];
                
                 if(!empty($res)){
-                    $filename = $keyword.'-'.date('Ymd').'.txt';
+                    $filename = slug($keyword.'-'.date('Ymd')).'.txt';
                     if(file_exists('data/related-keywords/'.$filename)){
                         $file = fopen('data/related-keywords/'.$filename,'w');
                     }else{
