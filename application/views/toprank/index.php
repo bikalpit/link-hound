@@ -169,13 +169,14 @@
               
               var jsonResults =  JSON.parse(res);
               if(jsonResults.result){
-                $("#frm-data").addClass('col-md-12');
+                
                 
                 $.ajax({
                     url:'<?php echo base_url(); ?>TopRanked/data/' + jsonResults.data,
                    success:function(res){
                     $(".loader-wrapper").fadeOut("slow");
                     $('#submit').attr('disabled', false);
+                    $("#frm-data").addClass('col-md-12');
                     $("#frm-data").html(res);
                     
                    }
