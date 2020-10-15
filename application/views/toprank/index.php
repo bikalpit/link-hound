@@ -166,8 +166,6 @@
               $("#msg-error").html("")
               $("#error-name").html("")
               $("#error-keyword").html("");
-              $(".loader-wrapper").fadeOut("slow");
-              $('#submit').attr('disabled', false);
               
               var jsonResults =  JSON.parse(res);
               if(jsonResults.result){
@@ -176,14 +174,20 @@
                 $.ajax({
                     url:'<?php echo base_url(); ?>TopRanked/data/' + jsonResults.data,
                    success:function(res){
+                    $(".loader-wrapper").fadeOut("slow");
+                    $('#submit').attr('disabled', false);
                     $("#frm-data").html(res);
                     
                    }
                 });
                 // $("#frm-data").html(jsonResults.data);
               }else if(jsonResults.error){
+                $(".loader-wrapper").fadeOut("slow");
+                $('#submit').attr('disabled', false);
                 $("#msg-error").html(jsonResults.error);
               }else{
+                $(".loader-wrapper").fadeOut("slow");
+                $('#submit').attr('disabled', false);
                 $("#error-name").html(jsonResults.data.name);
                 $("#error-keyword").html(jsonResults.data.keyword);
               }
