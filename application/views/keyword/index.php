@@ -54,7 +54,7 @@
       height: 35px;
       line-height: 17px;
       font-size: 13px;
-      color:#4c8cdb;
+      color:#4c8cdb !important;
       letter-spacing: 1px;
       line-height: 15px;
       border: 2px solid #efefef;
@@ -64,7 +64,7 @@
       height: 35px;
       line-height: 17px;
       font-size: 13px;
-      color:#ffffff;
+      color:#ffffff !important;
       background: #707070;
       letter-spacing: 1px;
       line-height: 15px;
