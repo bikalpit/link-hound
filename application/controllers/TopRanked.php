@@ -36,7 +36,7 @@ class TopRanked extends CI_Controller
             $file = fopen($path,"r");
             $indexdata = array();
             $i = 0;
-            echo "<label>".$name.': Top ranked URLs</label> <br/><table id="example" class="table-striped display">
+            echo "<label style='font-size: 23px;'>".$name.': Top ranked URLs</label> <br/><table id="example" class="table-striped display">
                <thead>
                   <tr>
                      <th></th>
