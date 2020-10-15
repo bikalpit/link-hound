@@ -56,9 +56,9 @@
       font-size: 13px;
       color:#4c8cdb !important;
       letter-spacing: 1px;
-      line-height: 15px;
       border: 2px solid #efefef;
       border-radius: 40px;
+      background: #efefef;
     }
     .active.cs-button{
       height: 35px;
@@ -67,7 +67,6 @@
       color:#ffffff !important;
       background: #707070;
       letter-spacing: 1px;
-      line-height: 15px;
       border: 2px solid #707070;
       border-radius: 40px;
     }
