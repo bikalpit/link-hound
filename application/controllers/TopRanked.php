@@ -27,13 +27,16 @@ class TopRanked extends CI_Controller
        // $this->load->view('toprank/index12');
     }
 
-    public function data($filename = ''){
+    public function data(){
+        $filename = $this->input->post('filename');
+        $name= $this->input->post('name');
+        
         $path = "data/top-ranked-urls/".$filename;
         if(file_exists($path)){
             $file = fopen($path,"r");
             $indexdata = array();
             $i = 0;
-            echo '<table id="example" class="table-striped display">
+            echo "<label>".$name.': Top ranked URLs</label> <br/><table id="example" class="table-striped display">
                <thead>
                   <tr>
                      <th></th>
@@ -46,17 +49,20 @@ class TopRanked extends CI_Controller
                   </tr>
                </thead>';
             while (($row = fgetcsv($file,0, "|")) !== FALSE) { 
-                if($i <= 10){
-                   echo "<tr>
-                        <td></td>
-                        <td>".$row[0]."</td>
-                        <td>-</td>
-                        <td>".$row[1]."</td>
-                        <td>".$row[2]."</td>
-                        <td>-</td>
-                        <td>-</td>
-                   </tr>";
+                if($i == 10){
+                    break;
                 }
+               echo "<tr>
+                    <td></td>
+                    <td>".$row[0]."</td>
+                    <td>-</td>
+                    <td>".$row[1]."</td>
+                    <td>".$row[2]."</td>
+                    <td>-</td>
+                    <td>-</td>
+               </tr>";
+
+                
                 $i++;
             }
             echo '</table><script>
@@ -223,7 +229,7 @@ class TopRanked extends CI_Controller
                         }
                     }
                     if($flag){
-                        echo json_encode(array("result" => true,"data" => $filename));
+                        echo json_encode(array("result" => true,"data" =>array('file'=> $filename,'name' => $name)));
                         return; 
                     }
                     fclose($file);

@@ -172,7 +172,9 @@
                 
                 
                 $.ajax({
-                    url:'<?php echo base_url(); ?>TopRanked/data/' + jsonResults.data,
+                    url:'<?php echo base_url(); ?>TopRanked/data',
+                    method:"POST",
+                    data: {filename : jsonResults.data.file ,name : jsonResults.data.name },
                    success:function(res){
                     $(".loader-wrapper").fadeOut("slow");
                     $('#submit').attr('disabled', false);
