@@ -94,9 +94,9 @@
     <div  class="row hedding" >
       <h3 class="mr-5">Link Hound</h3> 
       <div class="row">
-        <button class="btn btn-default mr-2 active cs-button">Keywords</button>
-        <button class="btn btn-default mr-2 cs-button" >URLs</button>
-        <button class="btn btn-default mr-2 cs-button" >Backlinks</button>
+        <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>Dashboard">Keywords</a>
+        <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
+        <a class="btn btn-default mr-2 cs-button" >Backlinks</a>
       </div>
     </div>
       
