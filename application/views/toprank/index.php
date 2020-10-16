@@ -209,7 +209,7 @@
               $("#msg-error").html("")
               $("#error-name").html("")
               $("#error-keyword").html("");
-              
+              index();
               var jsonResults =  JSON.parse(res);
               if(jsonResults.result){
                 $.ajax({
