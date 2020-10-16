@@ -36,7 +36,8 @@ class TopRanked extends CI_Controller
             $file = fopen($path,"r");
             $indexdata = array();
             $i = 0;
-            echo "<label style='font-size: 23px;font-weight: 400;margin-bottom:2%;text-transform: capitalize;'><span style='font-weight:500;'>".$name.' </span>: Top ranked URLs</label> <br/><table id="example" class="table-striped display">
+            echo "<div class='row ml-2'><label style='font-size: 23px;font-weight: 400;margin-bottom:2%;text-transform: capitalize;'><span style='font-weight:500;'>".$name.' </span>: Top ranked URLs</label> <br/>
+               <table id="example" class="table-striped display">
                <thead>
                   <tr>
                      <th></th>
@@ -79,8 +80,41 @@ class TopRanked extends CI_Controller
                      "style": "multi"
                 },
                 "order": [[1, "asc"]]
-            });</script>';
+            });</script>
+          <form id="frm-filter" action="" method="post">
+            <div class="form-group">
+              <input type="text" class="form-control" id="name" placeholder="Name this list" name="name">
+              <span id="error-name"></span>
+            </div>
+            <button type="submit" id="submit" class="btn btn-primary">Filter & get metrics</button>
+          </form>
+        </div>';
             
+        }
+    }
+
+    //previous filtered list
+    public function filter_datatable(){
+        $path = "data/filter_toprankedurls.txt";
+        if(file_exists($path)){
+            $file = fopen($path,"r");
+            $indexdata = array();
+            while (($row = fgetcsv($file,0, "|")) !== FALSE) {
+                
+                if(!empty($row)){ ?>
+                    <tr>
+                        <td><?php echo $row[0]; ?></td>
+                        <td>
+                            <a href="<?php echo base_url('TopRanked/download/'.$row[1]); ?>" class="btn btn-link" >Download</a> 
+                           
+                        </td>
+                        <td ><button class="btn btn-link" onclick="seeResultsRow('<?php echo $row[1]; ?>','<?php echo $row[0]; ?>')"> See Results</button>
+                        </td>
+                    </tr>
+                <?php
+                }
+               
+            }
         }
     }
 
@@ -110,33 +144,33 @@ class TopRanked extends CI_Controller
         }
     }
 
-    public function showResult(){
-        $filename = $this->input->post('name');
-        $keyword = $this->input->post('key');
-        $path = "data/related-keywords/".$filename;
-        $related_keywords_html = '';
+    // public function showResult(){
+    //     $filename = $this->input->post('name');
+    //     $keyword = $this->input->post('key');
+    //     $path = "data/related-keywords/".$filename;
+    //     $related_keywords_html = '';
 
-        if(file_exists($path)){
-            $file = fopen($path,"r");
-            $row = fgetcsv($file, 0, "|");
-            // var_dump($row);
-            $related_keywords_html .= "<h3>Related to ".$keyword."</h3><ul>";
-            $related_keywords_html .= '<li>'.$keyword.'</li><ul>';
+    //     if(file_exists($path)){
+    //         $file = fopen($path,"r");
+    //         $row = fgetcsv($file, 0, "|");
+    //         // var_dump($row);
+    //         $related_keywords_html .= "<h3>Related to ".$keyword."</h3><ul>";
+    //         $related_keywords_html .= '<li>'.$keyword.'</li><ul>';
 
-            if(!empty($row)){
-                foreach ($row as $r) {
-                    $related_keywords_html .='<li>'.$r.'</li>';
-                }
-            }
-            $related_keywords_html .="</ul>";
-            $related_keywords_html .="</ul>";
-        }else{
-            $related_keywords_html = "File not found.";
-        }
+    //         if(!empty($row)){
+    //             foreach ($row as $r) {
+    //                 $related_keywords_html .='<li>'.$r.'</li>';
+    //             }
+    //         }
+    //         $related_keywords_html .="</ul>";
+    //         $related_keywords_html .="</ul>";
+    //     }else{
+    //         $related_keywords_html = "File not found.";
+    //     }
         
 
-        echo json_encode(array("result" => true ,"data" => $related_keywords_html));
-    }
+    //     echo json_encode(array("result" => true ,"data" => $related_keywords_html));
+    // }
 
     //donwload data
     public function download($name){
@@ -169,8 +203,8 @@ class TopRanked extends CI_Controller
             // $api_url = 'https://sandbox.dataforseo.com/';
             
             // Instead of 'login' and 'password' use your credentials from https://app.dataforseo.com/api-dashboard
-            $client = new RestClient($api_url, null, API_LOGIN, API_PASSWORD);
-            // $client = new RestClient($api_url, null, 'rashmita.gangani@gmail.com', 'cd9a9515025ac3ee');
+            // $client = new RestClient($api_url, null, API_LOGIN, API_PASSWORD);
+            $client = new RestClient($api_url, null, 'rashmita.gangani@gmail.com', 'cd9a9515025ac3ee');
                        
             $post_array = array();
             // simple way to set a task
@@ -217,7 +251,7 @@ class TopRanked extends CI_Controller
                               "keyword" => mb_convert_encoding($row['keyword'], "UTF-8")
                             );
                             try {
-                                fputcsv($file,array("--------",$row['keyword'],"-----------"),'|');
+                                // fputcsv($file,array("--------",$row['keyword'],"-----------"),'|');
 
                                 $result = $client->post('/v3/serp/google/organic/live/regular', $post_array1);
                                 $res = $result['tasks'][0]['result'][0]['items'];

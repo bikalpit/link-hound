@@ -132,7 +132,7 @@
         </form>
       </div>
       <div class="col-md-6" style="padding-top:3%;">
-        <h5 class="mr-5">PREVIOUS SEARCHES</h5>
+        <h5 class="mr-5" id="right-title">PREVIOUS SEARCHES</h5>
         <table  class="display" id="data-previous">
           
         </table>
@@ -158,6 +158,22 @@
       url:"<?php echo base_url();?>TopRanked/datatable",
       method:"POST",
       success:function(res){
+        $("#right-title").html("PREVIOUS SEARCHES");
+        if(res){
+          $("#data-previous").html(res);
+        }else{
+          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
+        }
+      } 
+    });
+  }
+
+  function table_index(){
+    $.ajax({
+      url:"<?php echo base_url();?>TopRanked/filter_datatable",
+      method:"POST",
+      success:function(res){
+        $("#right-title").html("PREVIOUS FILTERED LISTS");
         if(res){
           $("#data-previous").html(res);
         }else{
@@ -169,7 +185,11 @@
 
   $(document).ready(function() {
     index();
-    // $(".loader-wrapper").fadeOut("slow");
+      // $(".loader-wrapper").fadeOut("slow");
+    $('#frm-filter').on('submit', function(event){ 
+        alert("hii");
+    });
+
     $('#send').on('submit', function(event){
         var fd = new FormData(this);
         event.preventDefault();
@@ -192,8 +212,6 @@
               
               var jsonResults =  JSON.parse(res);
               if(jsonResults.result){
-                
-                
                 $.ajax({
                     url:'<?php echo base_url(); ?>TopRanked/data',
                     method:"POST",
@@ -203,7 +221,7 @@
                     $('#submit').attr('disabled', false);
                     $("#frm-data").addClass('col-md-12');
                     $("#frm-data").html(res);
-                    index();
+                    table_index();
                     
                    }
                 });
@@ -247,7 +265,7 @@
             // $("#result").html(jsonResults.data);
             $("#frm-data").addClass('col-md-12');
             $("#frm-data").html(res);
-            index();
+            table_index();
           // }else{
           //   $("#error-msg").html(jsonResults.data);
           // }
