@@ -83,6 +83,17 @@
       color:#707070;
     }
 
+    table {
+      table-layout:fixed;
+    }
+    table td {
+      word-wrap: break-word;
+      max-width: 200px;
+    }
+    #example td {
+      white-space:inherit;
+    }
+
   </style>
   <!-- jQuery library -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -109,7 +120,7 @@
         <form action="" method="post" id="send" class="mb-5">
           <div class="form-group">
             <label for="">Get top ranked URLs:</label>
-            <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+            <input type="text" class="form-control" id="name" placeholder="Name" name="name" >
             <span id="error-name"></span>
           </div>
           <div class="form-group">
@@ -142,7 +153,19 @@
 <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.7/js/dataTables.checkboxes.min.js"></script>
 
 <script type="text/javascript">
-  
+  function index(){
+    $.ajax({
+      url:"<?php echo base_url();?>TopRanked/datatable",
+      method:"POST",
+      success:function(res){
+        if(res){
+          $("#data-previous").html(res);
+        }else{
+          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
+        }
+      } 
+    });
+  }
 
   $(document).ready(function() {
     index();
@@ -180,6 +203,7 @@
                     $('#submit').attr('disabled', false);
                     $("#frm-data").addClass('col-md-12');
                     $("#frm-data").html(res);
+                    index();
                     
                    }
                 });
@@ -199,21 +223,6 @@
     });
   });
 
-  function index(){
-    $.ajax({
-      url:"<?php echo base_url();?>TopRanked/datatable",
-      method:"POST",
-      success:function(res){
-        if(res){
-          $("#data-previous").html(res);
-        }else{
-          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
-        }
-      } 
-    });
-  }
-
-
   function resetform(){
     $("#keyword").val("");
     $("#result").html("");
@@ -223,9 +232,9 @@
   function seeResultsRow(name,key){
     // console.log(id);
     $.ajax({
-        url:"<?php echo base_url();?>Dashboard/show",
+        url:"<?php echo base_url();?>TopRanked/data",
         method:"POST",
-        data:{name:name,key:key},
+        data:{filename:name,name:key},
         beforeSend:function(){
             $(".loader-wrapper").show();
             $(".loader-wrapper").fadeIn("slow");
@@ -233,12 +242,15 @@
         success:function(res){
           $("#error-keyword").html("");
           $(".loader-wrapper").fadeOut("slow");
-          var jsonResults =  JSON.parse(res);
-          if(jsonResults.result){
-            $("#result").html(jsonResults.data);
-          }else{
-            $("#error-msg").html(jsonResults.data);
-          }
+          // var jsonResults =  JSON.parse(res);
+          // if(jsonResults.result){
+            // $("#result").html(jsonResults.data);
+            $("#frm-data").addClass('col-md-12');
+            $("#frm-data").html(res);
+            index();
+          // }else{
+          //   $("#error-msg").html(jsonResults.data);
+          // }
         } 
     });
   }

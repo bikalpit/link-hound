@@ -29,14 +29,14 @@ class TopRanked extends CI_Controller
 
     public function data(){
         $filename = $this->input->post('filename');
-        $name= $this->input->post('name');
+        $name = $this->input->post('name');
         
         $path = "data/top-ranked-urls/".$filename;
         if(file_exists($path)){
             $file = fopen($path,"r");
             $indexdata = array();
             $i = 0;
-            echo "<label style='font-size: 23px;'>".$name.': Top ranked URLs</label> <br/><table id="example" class="table-striped display">
+            echo "<label style='font-size: 23px;font-weight: 400;margin-bottom:2%;text-transform: capitalize;'><span style='font-weight:500;'>".$name.' </span>: Top ranked URLs</label> <br/><table id="example" class="table-striped display">
                <thead>
                   <tr>
                      <th></th>
@@ -49,9 +49,9 @@ class TopRanked extends CI_Controller
                   </tr>
                </thead>';
             while (($row = fgetcsv($file,0, "|")) !== FALSE) { 
-                if($i == 10){
-                    break;
-                }
+                // if($i == 10){
+                //     break;
+                // }
                echo "<tr>
                     <td></td>
                     <td>".$row[0]."</td>
@@ -84,6 +84,7 @@ class TopRanked extends CI_Controller
         }
     }
 
+    //previous seaching data
     public function datatable(){
         // $data['keywords'] = $this->DashboardModel->select('id');
         $path = "data/main_toprankedurls.txt";
@@ -96,7 +97,7 @@ class TopRanked extends CI_Controller
                     <tr>
                         <td><?php echo $row[0]; ?></td>
                         <td>
-                            <a href="<?php echo base_url('Dashboard/download/'.$row[1]); ?>" class="btn btn-link" >Download</a> 
+                            <a href="<?php echo base_url('TopRanked/download/'.$row[1]); ?>" class="btn btn-link" >Download</a> 
                            
                         </td>
                         <td ><button class="btn btn-link" onclick="seeResultsRow('<?php echo $row[1]; ?>','<?php echo $row[0]; ?>')"> See Results</button>
@@ -135,17 +136,16 @@ class TopRanked extends CI_Controller
         
 
         echo json_encode(array("result" => true ,"data" => $related_keywords_html));
-
-
     }
 
+    //donwload data
     public function download($name){
         
         header("Content-Description: File Transfer"); 
         header('Content-Type: application/txt');
         header('Content-Disposition: attachment; filename='.$name);
         header('Pragma: no-cache');
-        readfile("data/related-keywords/".$name);
+        readfile("data/top-ranked-urls/".$name);
 
     }
 
@@ -161,10 +161,12 @@ class TopRanked extends CI_Controller
             echo json_encode(array('result' => false,'data'=>array('keyword' => form_error('keyword'),'name' => form_error('name'))));
             return false;
         } else {
-            $keyword = $_POST['keyword'];
             $name = $_POST['name'];
-            // $api_url = 'https://api.dataforseo.com/';
-            $api_url = 'https://sandbox.dataforseo.com/';
+            $keywords = $_POST['keyword'];
+            // var_dump($keywords);die;
+            // $keyword = explode(',',$keywords);
+            $api_url = 'https://api.dataforseo.com/';
+            // $api_url = 'https://sandbox.dataforseo.com/';
             
             // Instead of 'login' and 'password' use your credentials from https://app.dataforseo.com/api-dashboard
             $client = new RestClient($api_url, null, API_LOGIN, API_PASSWORD);
@@ -173,29 +175,28 @@ class TopRanked extends CI_Controller
             $post_array = array();
             // simple way to set a task
             $post_array[] = array(
-               "keywords" => [
-                  "phone",
-                  "watch"
-               ],
+               "keywords" => [$keywords],
                "language_name" => "English",
-               "location_code" => 2840,
+               // "location_code" => 2840,
+               "location_name" => 'INDIA',
                "limit" => 5
             );
+
             try {
                 $flag = false;
                 // POST /v3/dataforseo_labs/keyword_ideas/live
+                // var_dump($post_array);
                 $result = $client->post('/v3/dataforseo_labs/keyword_ideas/live', $post_array);
                
                 $res = $result['tasks'][0]['result'][0]['items'];
-                // echo "<pre>";
-                // var_dump($res);
+                
                 if(!empty($res)){
 
                     $filename = slug($name.'-'.date('Ymd')).'.txt';
 
                     $main_filename = "data/main_toprankedurls.txt";
                     $mainrecord = fopen($main_filename,'a');
-                    fputcsv($mainrecord,array($name,$filename),"|");
+                    fputcsv($mainrecord,array($name,$filename,$res[0]['keyword'],$res[1]['keyword'],$res[2]['keyword'],$res[3]['keyword'],$res[4]['keyword']),"|");
                     fclose($mainrecord);
 
                     $file = fopen("data/top-ranked-urls/".$filename,'a');
@@ -208,14 +209,19 @@ class TopRanked extends CI_Controller
                             $post_array1 = array();
                             // You can set only one task at a time
                             $post_array1[] = array(
-                              "language_code" => "en",
-                              "location_code" => 2840,
+                              // "language_code" => "en",
+                              // "location_code" => 2840,
+                              "language_name" => "English",
+                              "location_name" => 'INDIA',
+                              "limit" => 20,
                               "keyword" => mb_convert_encoding($row['keyword'], "UTF-8")
                             );
                             try {
+                                fputcsv($file,array("--------",$row['keyword'],"-----------"),'|');
+
                                 $result = $client->post('/v3/serp/google/organic/live/regular', $post_array1);
                                 $res = $result['tasks'][0]['result'][0]['items'];
-                                // echo "<pre>";var_dump($result);die;
+                                // echo "<pre>";var_dump($result);
                                 if(!empty($res)){
                                     foreach ($res as $data) {
                                         
