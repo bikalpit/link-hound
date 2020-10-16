@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-defined('API_LOGIN') OR define('API_LOGIN', 'rashmitag205@gmail.com');
-defined('API_PASSWORD') OR define('API_PASSWORD', '395109962484d5a1');
+defined('API_LOGIN') OR define('API_LOGIN', 'rashmita.gangani@gmail.com');
+defined('API_PASSWORD') OR define('API_PASSWORD', 'cd9a9515025ac3ee');
 /*
 |--------------------------------------------------------------------------
 | Display Debug backtrace
