@@ -56,7 +56,22 @@ class TopRanked extends CI_Controller
                echo "<tr>
                     <td></td>
                     <td>".$row[0]."</td>
-                    <td>-</td>
+                    <td>";
+                    
+                    if(1 == $row[4]){
+                        $value = $row[3] * 30 * .52;
+                    }else if(2== $row[4]){
+                        $value = $row[3] * 30 * .21;
+                    }else if(3 == $row[4]){
+                        $value = $row[3] * 30 * .13;
+                    }else if(4 == $row[4]){
+                        $value = $row[3] * 30 * .09;
+                    }else if(5 == $row[4]){ 
+                        $value = $row[3] * 30 * .05;
+                    }else{
+                        $value = 0;
+                    }
+               echo $value."</td>
                     <td>".$row[1]."</td>
                     <td>".$row[2]."</td>
                     <td>-</td>
@@ -230,15 +245,22 @@ class TopRanked extends CI_Controller
 
                     $main_filename = "data/main_toprankedurls.txt";
                     $mainrecord = fopen($main_filename,'a');
-                    fputcsv($mainrecord,array($name,$filename,$res[0]['keyword'],$res[1]['keyword'],$res[2]['keyword'],$res[3]['keyword'],$res[4]['keyword']),"|");
+                    fputcsv($mainrecord,array($name,$filename,$res[0]['keyword'],$res[0]['impressions_info']['daily_clicks_average'],$res[1]['keyword'],$res[1]['impressions_info']['daily_clicks_average'],$res[2]['keyword'],$res[2]['impressions_info']['daily_clicks_average'],$res[3]['keyword'],$res[3]['impressions_info']['daily_clicks_average'],$res[4]['keyword'],$res[4]['impressions_info']['daily_clicks_average']),"|");
                     fclose($mainrecord);
 
                     $file = fopen("data/top-ranked-urls/".$filename,'a');
-                    
-                    foreach ($res as $row) {
-                        
-                        if(!empty($row['keyword'])){
-                            // echo "<pre>";var_dump($row['keyword']);
+                    $i = 0;
+                    $top5words = array(
+                        array('keyword' => $res[0]['keyword'],'daily_clicks_average' => $res[0]['impressions_info']['daily_clicks_average']),
+                        array('keyword' => $res[1]['keyword'],'daily_clicks_average' => $res[1]['impressions_info']['daily_clicks_average']),
+                        array('keyword' => $res[2]['keyword'],'daily_clicks_average' => $res[2]['impressions_info']['daily_clicks_average']),
+                        array('keyword' => $res[3]['keyword'],'daily_clicks_average' => $res[3]['impressions_info']['daily_clicks_average']),
+                        array('keyword' => $res[4]['keyword'],'daily_clicks_average' => $res[4]['impressions_info']['daily_clicks_average']));
+                    foreach ($top5words as $row) {
+                       if(!empty($row['keyword'])){
+                            // echo "<pre>";
+                            // var_dump($row);
+                            $daily_clicks_average = isset($row['daily_clicks_average']) ? $row['daily_clicks_average'] : 0;
 
                             $post_array1 = array();
                             // You can set only one task at a time
@@ -248,7 +270,8 @@ class TopRanked extends CI_Controller
                               "language_name" => "English",
                               "location_name" => 'INDIA',
                               "limit" => 20,
-                              "keyword" => mb_convert_encoding($row['keyword'], "UTF-8")
+                              "keyword" => mb_convert_encoding($row['keyword'], "UTF-8"),
+                              
                             );
                             try {
                                 // fputcsv($file,array("--------",$row['keyword'],"-----------"),'|');
@@ -257,9 +280,10 @@ class TopRanked extends CI_Controller
                                 $res = $result['tasks'][0]['result'][0]['items'];
                                 // echo "<pre>";var_dump($result);
                                 if(!empty($res)){
+                                    $i++;
                                     foreach ($res as $data) {
                                         
-                                        fputcsv($file,array($data['url'],$data['title'],$data['description']),'|');
+                                        fputcsv($file,array($data['url'],$data['title'],$data['description'],$daily_clicks_average,$data['rank_group']),'|');
                                     }
                                     $flag = true;
                                 }
@@ -268,6 +292,7 @@ class TopRanked extends CI_Controller
                             }
                         }
                     }
+                    
                     if($flag){
                         echo json_encode(array("result" => true,"data" =>array('file'=> $filename,'name' => $name)));
                         return; 
