@@ -211,14 +211,13 @@ class TopRanked extends CI_Controller
             return false;
         } else {
             $name = $_POST['name'];
-            $keywords = $_POST['keyword'];
-            // $keywords = nl2br($_POST['keyword']);
-            // $locationcodearray = explode('<br />',$keywords);
-            // $locationcode = explode('||',$locationcodearray[0]);
-            // $location_code = trim($locationcode[1]);
-            // var_dump($location_code);
-
-            // die;
+            // $keywords = $_POST['keyword'];
+            $keywords = nl2br($_POST['keyword']);
+            $locationcodearray = explode('<br />',$keywords);
+            $locationcode = explode('||',$locationcodearray[0]);
+            $location_code = trim($locationcode[1]);
+            $keywords_string = preg_replace('/\s{2,}/', ' ',str_replace("<br />",",",str_replace("||","",str_replace($location_code,"",$keywords))));
+            
             // var_dump($keywords);die;
             // $keyword = explode(',',$keywords);
             $api_url = 'https://api.dataforseo.com/';
@@ -231,7 +230,7 @@ class TopRanked extends CI_Controller
             $post_array = array();
             // simple way to set a task
             $post_array[] = array(
-               "keywords" => [$keywords],
+               "keywords" => [$keywords_string],
                "language_name" => "English",
                // "location_code" => 2840,
                "location_name" => 'INDIA',
