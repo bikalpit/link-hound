@@ -95,7 +95,7 @@
       <div class="row">
         <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>Dashboard">Keywords</a>
         <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
-        <a class="btn btn-default mr-2 cs-button" >Backlinks</a>
+        <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>BackLinks">Backlinks</a>
       </div>
     </div>
       
@@ -174,7 +174,7 @@
         if(res){
           $("#data-previous").html(res);
         }else{
-          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
+          $("#data-previous").html('<tr><td><label>No Previous Searches</label></td></tr>');
         }
       } 
     });

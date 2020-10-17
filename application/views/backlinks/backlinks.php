@@ -97,12 +97,12 @@
       <h3 class="mr-5">Link Hound</h3> 
       <div class="row">
         <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>Dashboard">Keywords</a>
-        <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
-        <a class="btn btn-default mr-2 cs-button" >Backlinks</a>
+        <a class="btn btn-default mr-2  cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
+        <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>BackLinks">Backlinks</a>
       </div>
     </div>
     <div class="row mt-3">
-      <h5>Top ranked URLs</h5>
+      <h5>{Name} : Backlinks</h5>
     </div>
     <div class="row">
       <div class="col-md-12 mb-3">
@@ -110,40 +110,40 @@
           <table id="example" class="display" cellspacing="0" width="100%">
              <thead>
                 <tr>
-                   <th></th>
-                   <th>URL</th>
-                   <th>Value</th>
+                   <th>Ranking URL</th>
+                   <th>Backlink</th>
                    <th>Title</th>
-                   <th>Description</th>
-                   <th>Top 10 Count</th>
-                   <th>Top 100 Count</th>
+                   <th>Anchor</th>
+                   <th>Do follow</th>
+                   <th>is image link</th>
+                   <th>Backlink domain authority</th>
+                   <th>Backlink page rank</th>
+                   <th>URL count</th>
+                   <th>Domain count</th>
                 </tr>
              </thead>
              <tfoot>
                 <tr>
-                   <th></th>
-                   <th>Name</th>
-                   <th>Position</th>
-                   <th>Office</th>
-                   <th>Extn.</th>
-                   <th>Start date</th>
-                   <th>Salary</th>
+                   <th>Ranking URL</th>
+                   <th>Backlink</th>
+                   <th>Title</th>
+                   <th>Anchor</th>
+                   <th>Do follow</th>
+                   <th>is image link</th>
+                   <th>Backlink domain authority</th>
+                   <th>Backlink page rank</th>
+                   <th>URL count</th>
+                   <th>Domain count</th>
                 </tr>
              </tfoot>
           </table>
         </div>
         <div class="row">
-          <form>
-            <div class="form-group">
-              <input type="text" class="form-control" id="name" placeholder="Name this list" name="name">
-              <span id="error-name"></span>
-            </div>
-            <a type="submit" id="submit" href="<?php echo base_url(); ?>TopRanked/show"  class="btn btn-primary">Filter & get metrics</a>
-          </form>
+          <a type="submit" id="submit"  class="btn btn-primary" style="color:white;">Download</a>
         </div>
       </div>
       <div class="col-md-12 pl-0 mb-5">
-        <h5 class="mr-5">PREVIOUS FILTERED LISTS</h5>
+        <h5 class="mr-5">PREVIOUS BACKLINKS LISTS</h5>
         <table style="width: 100%;" id="data-previous">
           
         </table>
@@ -166,42 +166,16 @@
 
 <script>
 $(document).ready(function (){
-   var table = $('#example').DataTable({
-      'processing': true,
-      'serverSide': true,
-      'ajax': '<?php echo base_url(); ?>TopRanked/data',
-      'columnDefs': [
-         {
-            'targets': 0,
-            'checkboxes': {
-               'selectRow': true
-            }
-         }
-      ],
-      'select': {
-         'style': 'multi'
-      },
-      'order': [[1, 'asc']]
-   });
-
-
-   // Handle form submission event
-   $('#frm-example').on('submit', function(e){
-      var form = this;
-
-      var rows_selected = table.column(0).checkboxes.selected();
-
-      // Iterate over all selected checkboxes
-      $.each(rows_selected, function(index, rowId){
-         // Create a hidden element
-         $(form).append(
-             $('<input>')
-                .attr('type', 'hidden')
-                .attr('name', 'id[]')
-                .val(rowId)
-         );
-      });
-   });
+   var table = $("#example").DataTable({ 
+                "columnDefs": [
+                     {
+                        "targets": 0,
+                        
+                     }
+                ],
+                
+                "order": [[1, "asc"]]
+            });
 });
 index();
 function index(){

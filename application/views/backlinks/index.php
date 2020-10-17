@@ -110,8 +110,8 @@
       <h3 class="mr-5">Link Hound</h3> 
       <div class="row">
         <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>Dashboard">Keywords</a>
-        <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
-        <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>BackLinks">Backlinks</a>
+        <a class="btn btn-default mr-2  cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
+        <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>BackLinks">Backlinks</a>
       </div>
     </div>
       
@@ -119,16 +119,16 @@
       <div class="col-md-6 pl-0" id="frm-data">
         <form action="" method="post" id="send" class="mb-5">
           <div class="form-group">
-            <label for="">Get top ranked URLs:</label>
+            <label for="">Get Backlinks:</label>
             <input type="text" class="form-control" id="name" placeholder="Name" name="name" >
             <span id="error-name"></span>
           </div>
           <div class="form-group">
-          	<textarea class="form-control" rows="5" id="keyword" placeholder="Keyword" name="keyword"></textarea>
-            <span id="error-keyword"></span>
+          	<textarea class="form-control" rows="5" id="urls" placeholder="URLs" name="urls"></textarea>
+            <span id="error-urls"></span>
           </div>
           <div id="msg-error"></div>
-          <button type="submit" id="submit"   class="btn btn-primary">Get top ranked URLs</button>
+          <a type="submit" id="submit" href="<?php echo base_url(); ?>BackLinks/buttontempary"  class="btn btn-primary">Get backlinks</a>
         </form>
       </div>
       <div class="col-md-6" style="padding-top:3%;">

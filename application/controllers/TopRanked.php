@@ -212,6 +212,13 @@ class TopRanked extends CI_Controller
         } else {
             $name = $_POST['name'];
             $keywords = $_POST['keyword'];
+            // $keywords = nl2br($_POST['keyword']);
+            // $locationcodearray = explode('<br />',$keywords);
+            // $locationcode = explode('||',$locationcodearray[0]);
+            // $location_code = trim($locationcode[1]);
+            // var_dump($location_code);
+
+            // die;
             // var_dump($keywords);die;
             // $keyword = explode(',',$keywords);
             $api_url = 'https://api.dataforseo.com/';
