@@ -232,8 +232,8 @@ class TopRanked extends CI_Controller
             $post_array[] = array(
                "keywords" => [$keywords_string],
                "language_name" => "English",
-               // "location_code" => 2840,
-               "location_name" => 'INDIA',
+               "location_code" => $location_code,
+               // "location_name" => 'INDIA',
                "limit" => 5
             );
 
