@@ -28,12 +28,12 @@ class TopRanked extends CI_Controller
     // }
 
     public function data(){
-        // $filename = $this->input->post('filename');
-        // $name = $this->input->post('name');
-        // $filenamejson = $this->input->post('filenamejson');
-        $filename = "pizza-20201019.json";
-        $name = "pizza";
-        $filenamejson = "toppizza-20201019.json";
+        $filename = $this->input->post('filename');
+        $name = $this->input->post('name');
+        $filenamejson = $this->input->post('filenamejson');
+        // $filename = "pizza-20201019.json";
+        // $name = "pizza";
+        // $filenamejson = "toppizza-20201019.json";
         $maindata = json_decode(file_get_contents("data/top-ranked-urls/".$filename));
         // array_insert($arr,1,"one-half");
         $main_data = array_merge($maindata[0],$maindata[1],$maindata[2],$maindata[3],$maindata[4]);
@@ -376,8 +376,7 @@ class TopRanked extends CI_Controller
                             try {
                                 $result = $client->post('/v3/serp/google/organic/live/regular', $post_array1);
                                 $res = $result['tasks'][0]['result'][0]['items'];
-                                echo "<pre>";var_dump($res);
-                                die;
+                               
                                 if(!empty($res)){
                                     array_push($main_data, $res);
                                     $top5_i=0;$top10_i=0;$top100_i=0;

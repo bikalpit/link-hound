@@ -124,7 +124,7 @@
             <span id="error-name"></span>
           </div>
           <div class="form-group">
-          	<textarea class="form-control" rows="5" id="keyword" placeholder="Keyword" name="keyword"></textarea>
+            <textarea class="form-control" rows="5" id="keyword" placeholder="Keyword" name="keyword"></textarea>
             <span id="error-keyword"></span>
           </div>
           <div id="msg-error"></div>
