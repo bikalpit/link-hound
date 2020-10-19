@@ -111,7 +111,7 @@
       <div class="row">
         <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>Dashboard">Keywords</a>
         <a class="btn btn-default mr-2 active cs-button" href="<?php echo base_url(); ?>TopRanked">URLs</a>
-        <a class="btn btn-default mr-2 cs-button" href="<?php echo base_url(); ?>BackLinks">Backlinks</a>
+        <a class="btn btn-default mr-2 cs-button" >Backlinks</a>
       </div>
     </div>
       
@@ -162,7 +162,7 @@
         if(res){
           $("#data-previous").html(res);
         }else{
-          $("#data-previous").html('<tr><td><label>No Previous Searches</label></td></tr>');
+          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
         }
       } 
     });
@@ -177,7 +177,7 @@
         if(res){
           $("#data-previous").html(res);
         }else{
-          $("#data-previous").html('<tr><td><label>No Previous Searches</label></td></tr>');
+          $("#data-previous").html('<tr><td><label>No Previous Schema</label></td></tr>');
         }
       } 
     });
@@ -209,13 +209,13 @@
               $("#msg-error").html("")
               $("#error-name").html("")
               $("#error-keyword").html("");
-              index();
+              
               var jsonResults =  JSON.parse(res);
               if(jsonResults.result){
                 $.ajax({
                     url:'<?php echo base_url(); ?>TopRanked/data',
                     method:"POST",
-                    data: {filename : jsonResults.data.file ,name : jsonResults.data.name },
+                    data: {filename : jsonResults.data.file ,name : jsonResults.data.name,filenamejson:jsonResults.data.top_positions },
                    success:function(res){
                     $(".loader-wrapper").fadeOut("slow");
                     $('#submit').attr('disabled', false);
@@ -247,12 +247,12 @@
     $("#error-keyword").html("");
   }
 
-  function seeResultsRow(name,key){
+  function seeResultsRow(name,key,json){
     // console.log(id);
     $.ajax({
         url:"<?php echo base_url();?>TopRanked/data",
         method:"POST",
-        data:{filename:name,name:key},
+        data:{filename:name,name:key,filenamejson:json},
         beforeSend:function(){
             $(".loader-wrapper").show();
             $(".loader-wrapper").fadeIn("slow");
