@@ -76,17 +76,7 @@ class TopRanked extends CI_Controller
            $res_main_data = $this->unique_multidim_array($main_data,"url");
            // echo "<pre>";
            // var_dump($res_main_data);die;
-            echo "<style>.tiptext {
-    color:#069; 
-    cursor:pointer;
-}
-.description {
-    display:none;
-    position:absolute;
-    border:1px solid #000;
-    width:400px;
-    height:400px;
-}</style><div class='row ml-2'><label style='font-size: 23px;font-weight: 400;margin-bottom:2%;text-transform: capitalize;'><span style='font-weight:500;'>".$name.' </span>: Top ranked URLs</label> <br/>
+            echo "<div class='row ml-2'><label style='font-size: 23px;font-weight: 400;margin-bottom:2%;text-transform: capitalize;'><span style='font-weight:500;'>".$name.' </span>: Top ranked URLs</label> <br/>
                <table id="example" class="table-striped display">
                <thead>
                   <tr>
