@@ -34,10 +34,12 @@ class TopRanked extends CI_Controller
         // $filename = "pizza-20201019.json";
         // $name = "pizza";
         // $filenamejson = "toppizza-20201019.json";
-        $maindata = json_decode(file_get_contents("data/top-ranked-urls/".$filename));
+        $main_data = json_decode(file_get_contents("data/top-ranked-urls/".$filename));
         // array_insert($arr,1,"one-half");
-        $main_data = array_merge($maindata[0],$maindata[1],$maindata[2],$maindata[3],$maindata[4]);
-        // var_dump($main_data);die;
+        // echo "<pre>";
+        // var_dump($maindata);die;
+        // $main_data = array_merge($maindata[0],$maindata[1],$maindata[2],$maindata[3],$maindata[4]);
+        
         $data = json_decode(file_get_contents("data/top-ranked-urls/".$filenamejson));
         $top_5 = $data->top5;
         $top_10 = $data->top10;
@@ -91,9 +93,11 @@ class TopRanked extends CI_Controller
                </thead>';
             // while (($row = fgetcsv($file,0, "|")) !== FALSE) { 
             foreach($res_main_data as $row) {
+                // var_dump($row);die;
                 $row0 = isset($row['url'])? $row['url'] : '-';
                 $row1 = isset($row['title'])? $row['title'] : '-';
                 $row2 = isset($row['description'])? $row['description'] : '-';
+                $row3 = isset($row['daily_clicks_average'])? $row['daily_clicks_average'] : '-';
 
                 $compertop5 = array_column($top5result,'URL');
                 // echo "<pre>";
@@ -114,15 +118,15 @@ class TopRanked extends CI_Controller
                // var_dump($top100result[$index100]['count']);die;
 
                 if(1 == $row['rank_group']){
-                    $value = 1 * 30 * .52 + $top5result[$index5]['count'];
+                    $value = $row3 * 30 * .52 + $top5result[$index5]['count'];
                 }else if(2== $row['rank_group']){
-                    $value = 1 * 30 * .21 + $top5result[$index5]['count'];
+                    $value = $row3 * 30 * .21 + $top5result[$index5]['count'];
                 }else if(3 == $row['rank_group']){
-                    $value = 1 * 30 * .13 + $top5result[$index5]['count'];
+                    $value = $row3 * 30 * .13 + $top5result[$index5]['count'];
                 }else if(4 == $row['rank_group']){
-                    $value = 1 * 30 * .09 + $top5result[$index5]['count'];
+                    $value = $row3 * 30 * .09 + $top5result[$index5]['count'];
                 }else if(5 == $row['rank_group']){ 
-                    $value = 1 * 30 * .05 + $top5result[$index5]['count'];
+                    $value = $row3 * 30 * .05 + $top5result[$index5]['count'];
                 }else{
                     $value = $top5result[$index5]['count'];
                 }
@@ -368,7 +372,7 @@ class TopRanked extends CI_Controller
                                 $res = $result['tasks'][0]['result'][0]['items'];
                                
                                 if(!empty($res)){
-                                    array_push($main_data, $res);
+                                    
                                     $top5_i=0;$top10_i=0;$top100_i=0;
                                     foreach ($res as $data) {
                                         if($top5_i < 5){
@@ -386,9 +390,9 @@ class TopRanked extends CI_Controller
                                             $top100_i++;
                                            $l++;
                                         }
-                                        if($top100_i == 100){
-                                            break;
-                                        }
+                                        // var_dump($data);die;
+                                        $data['daily_clicks_average'] = $daily_clicks_average;
+                                        array_push($main_data, $data);
                                         // array($data['url'],$data['title'],$data['description'],$daily_clicks_average,$data['rank_group'])
                                         // fputcsv($file,array($data['url'],$data['title'],$data['description'],$daily_clicks_average,$data['rank_group']),'|');
                                     }
