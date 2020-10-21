@@ -1,0 +1,18 @@
+STEP 1: 
+# First STEP in we are use below api
+	https://docs.dataforseo.com/v3/dataforseo_labs/related_keywords/live/?php
+# SET Peremeter with value as below
+	1."location_name" set in "United States"
+	2."order_by" set in  ["keyword_data.keyword,desc"]
+
+
+
+
+
+# First STEP in we are use below api
+	https://docs.dataforseo.com/v3/dataforseo_labs/keyword_ideas/live/?php
+# SET Peremeter with value as below
+	1."location_name" set in "United States"
+	2. "limit" set in "10"
+	3."closely_variants" set in true
+	4."order_by" set in  ["relevance,desc"]

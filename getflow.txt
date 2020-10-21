@@ -1,0 +1,17 @@
+1>enter 5 keyword 
+2>API 1 CAll
+3>give 100 result in response
+ keyword fields
+ daliy click avreges
+4>all 100 keyword pass in API 2
+5>API 2 call in top 5 organice result get
+6>like 500 url get
+7>calculate value of value fields.
+rank_group values= daliy click * 30*.52
+8>if url duplicate then sum of above calclute value
+
+
+Top 10
+1>total result get 500 record then top 10 url in check duplicate and print value of count other remaining 0.
+top 100 
+1>total result get 500 record then top 100 url in check duplicate and print value of count other remaining 0.

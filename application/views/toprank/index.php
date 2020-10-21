@@ -10,6 +10,7 @@
   <!-- datatable css -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/se-1.2.0/datatables.min.css">
   <link rel="stylesheet" type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.7/css/dataTables.checkboxes.css">
+   <link href="https://rawgit.com/shaneapen/Image-Preview-for-Links/master/image_preview_for_links.css" rel="stylesheet">
   <style type="text/css">
     .loader-wrapper {
       width: 100%;
@@ -94,6 +95,7 @@
       white-space:inherit;
     }
 
+
   </style>
   <!-- jQuery library -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -151,7 +153,7 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/se-1.2.0/datatables.min.js"></script>
 <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.7/js/dataTables.checkboxes.min.js"></script>
-
+<script src="https://rawgit.com/shaneapen/Image-Preview-for-Links/master/image_preview_for_links.js"></script>
 <script type="text/javascript">
   function index(){
     $.ajax({
@@ -186,9 +188,7 @@
   $(document).ready(function() {
     index();
       // $(".loader-wrapper").fadeOut("slow");
-    $('#frm-filter').on('submit', function(event){ 
-        alert("hii");
-    });
+    
 
     $('#send').on('submit', function(event){
         var fd = new FormData(this);
