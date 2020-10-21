@@ -110,7 +110,7 @@
           <button type="submit" id="submit"  class="btn btn-primary">Get Related Keyword</button> 
           <button type="button" class="btn btn-default" onclick="resetform()">Reset</button>
         </form>
-        
+        <div id="result" class=""></div>
       </div>
       <div class="col-md-6 " style="padding-top:3%;">
         <h5 class="mr-5">PREVIOUS SEARCHES</h5>
@@ -119,7 +119,7 @@
         </table>
         <div id="error-msg"></div>
       </div>
-      <div id="result" class=""></div>
+      
       
     </div>
     </div>

@@ -54,23 +54,39 @@ class Dashboard extends CI_Controller
 
         if(file_exists($path)){
             $file = fopen($path,"r");
-            $row = fgetcsv($file, 0, "|");
-            // var_dump($row);
-            $related_keywords_html .= "<h3>Related to ".$keyword."</h3><ul>";
-            $related_keywords_html .= '<li>'.$keyword.'</li><ul>';
-
-            if(!empty($row)){
-                foreach ($row as $r) {
-                    $related_keywords_html .='<li>'.$r.'</li>';
+            // $row = fgetcsv($file, 0, "|");
+            $res = array();
+            $header = NULL;
+            $heading = NULL;
+            $data = array();
+            while (($row = fgetcsv($file, 0, "|")) !== FALSE) {
+                array_push($res, $row);
+            }
+            //row wise data convert in to column
+            $retData = array();
+            foreach ($res as $row => $columns) {
+                foreach ($columns as $row2 => $column2) {
+                  $retData[$row2][$row] = $column2;
                 }
             }
-            $related_keywords_html .="</ul>";
-            $related_keywords_html .="</ul>";
+            $related_keywords_html .= "<h3>Related to ".$keyword."</h3><ul>";
+            foreach ($retData as $rows) {
+                $flag = 1;
+                foreach ($rows as $row) {
+                    if($flag == 1){
+                      $related_keywords_html .= '<li>'.$row.'</li><ul>';
+                      $flag = 0;
+                    }else{
+                        if(!empty($row))
+                            $related_keywords_html .= '<li>'.$row.'</li>'; 
+                    }
+                }
+                $related_keywords_html .="</ul>";
+            }
         }else{
             $related_keywords_html = "File not found.";
         }
         
-
         echo json_encode(array("result" => true ,"data" => $related_keywords_html));
 
 
@@ -86,17 +102,17 @@ class Dashboard extends CI_Controller
 
     }
 
-    // function flip_row_col_array($array) {
-    //     $out = array();
-    //     foreach ($array as  $rowkey => $row) {
-    //         if(!empty($row)){
-    //             foreach($row as $colkey => $col){
-    //                 $out[$colkey][$rowkey]=$col;
-    //             }
-    //         }
-    //     }
-    //     return $out;
-    // }
+    function flip_row_col_array($array) {
+        $out = array();
+        foreach ($array as  $rowkey => $row) {
+            if(!empty($row)){
+                foreach($row as $colkey => $col){
+                    $out[$colkey][$rowkey]=$col;
+                }
+            }
+        }
+        return $out;
+    }
 
    
     public function raletedKeyword(){
@@ -122,203 +138,38 @@ class Dashboard extends CI_Controller
             // simple way to set a task
             $post_array = array();
             $post_array[] = array(
-               "keyword" => $keyword,
-               "language_name" => "English",
-               "location_name" => 'INDIA',
+                //---start related_keyword API parameter-----
+                "keyword" => $keyword,
+                "language_name" => "English",
+                "location_name" => 'United States',
+                "order_by" => ["keyword_data.keyword,desc"]
+                //---end related_keyword API parameter-----
+
+                //---start keyword_idea API parameter-----
+                // "keywords" => [
+                //   $keyword
+                // ],
+                // "language_name" => "English",
+                // "closely_variants" =>true,
+                // "limit" => 10,
+                // "location_name" => 'United States',
+                // "order_by" => ["relevance,desc"]
+                //---end keyword_idea API parameter-----
             );
             try {
                 $related_keywords_html = '';
                 // POST /v3/dataforseo_labs/related_keywords/live
+                
+                //---start related_keyword API parameter-----
                 $result = $client->post('/v3/dataforseo_labs/related_keywords/live', $post_array);
-                // $result = array(
-                //   "version"=> "0.1.20200923",
-                //   "status_code"=>20000,
-                //   "status_message"=> "Ok.",
-                //   "time"=>"0.0516 sec.",
-                //   "cost"=>0.0109,
-                //   "tasks_count"=> 1,
-                //   "tasks_error"=> 0,
-                //   "tasks"=>array(
-                //       0 => array(
-                //             "id" =>"10130955-2367-0124-0000-f7e92e747ab7",
-                //             "status_code" =>20000,
-                //             "status_message" =>"Ok.",
-                //             "time" =>"0.0276 sec.",
-                //             "cost" => 0.0109,
-                //             "result_count" =>1,
-                //             "path" =>array(
-                //               0=>"v3",
-                //               1=> "dataforseo_labs",
-                //               2=> "related_keywords",
-                //               3=>"live"
-                //             ),
-                //             "data"=>
-                //             array(
-                //               "api" => "dataforseo_labs",
-                //               "function" => "related_keywords",
-                //               "keyword" => "cricket",
-                //               "language_name" => "English",
-                //               "location_name"=> "INDIA"
-                //             ),
-                //             "result"=>
-                //               array(
-                //                 0 =>
-                //                 array(
-                //                   "seed_keyword"=>"cricket",
-                //                   "seed_keyword_data"=>NULL,
-                //                   "location_code"=>2356,
-                //                   "language_code"=>"en",
-                //                   "total_count"=>9,
-                //                   "items_count"=>9,
-                //                   "items" =>
-                //                   array(
-                //                     0=>
-                //                     array(
-                //                       "keyword_data"=>
-                //                       array(
-                //                         "keyword"=>"cricket",
-                //                         "location_code"=>2356,
-                //                         "language_code"=>"en",
-                //                         "keyword_info"=>
-                //                         array(
-                //                           "last_updated_time"=> "2020-09-25T10:52:20.6967677Z",
-                //                           "competition"=>0.012620933765024,
-                //                           "cpc"=>0.252268,
-                //                           "search_volume"=>7480000,
-                //                           "categories"=>
-                //                           array(
-                //                             0=>10013,
-                //                             1=>10014,
-                //                             2=>10108,
-                //                             3=>10110,
-                //                             4=>10114,
-                //                             5=>10597,
-                //                             6=>13605,
-                //                             7=>13607
-                //                           ),
-                //                           "monthly_searches"=>
-                //                           array(
-                //                             0=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>8,
-                //                               "search_volume"=>2740000
-                //                             ),
-                //                             1=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>7,
-                //                               "search_volume"=>2240000
-                //                             ),
-                //                             2=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>6,
-                //                               "search_volume"=>1220000
-                //                             ),
-                //                             3=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>5,
-                //                               "search_volume"=>1500000
-                //                             ),
-                //                             4=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>4,
-                //                               "search_volume"=>1500000
-                //                             ),
-                //                             5=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>3,
-                //                               "search_volume"=>5000000
-                //                             ),
-                //                             6=>
-                //                             array(
-                //                               "year"=> 2020,
-                //                               "month"=>2,
-                //                               "search_volume"=>13600000
-                //                             ),
-                //                             7=>
-                //                             array(
-                //                               "year"=>2020,
-                //                               "month"=>1,
-                //                               "search_volume"=>20400000
-                //                             ),
-                //                             8=>
-                //                             array(
-                //                               "year"=> 2019,
-                //                               "month"=> 12,
-                //                               "search_volume"=> 11100000
-                //                             ),
-                //                             9=>
-                //                             array(
-                //                               "year"=> 2019,
-                //                               "month"=> 11,
-                //                               "search_volume"=>9140000
-                //                             ),
-                //                             10=>
-                //                             array(
-                //                               "year"=>2019,
-                //                               "month"=>10,
-                //                               "search_volume"=> 9140000
-                //                             ),
-                //                             11=>
-                //                             array(
-                //                               "year"=>2019,
-                //                               "month"=> 9,
-                //                               "search_volume"=>
-                //                               6120000
-                //                             )
-                //                           )
-                //                         ),
-                //                         "impressions_info"=>
-                //                         array(
-                //                           "last_updated_time"=> "2020-09-24T12:00:06.6529367Z",
-                //                           "bid"=>999,
-                //                           "match_type"=>"exact",
-                //                           "ad_position_min"=>1.11,
-                //                           "ad_position_max"=> 1,
-                //                           "ad_position_average"=>1.06,
-                //                           "cpc_min"=>4.14,
-                //                           "cpc_max"=> 5.06,
-                //                           "cpc_average"=> 4.6,
-                //                           "daily_impressions_min"=>2226.92,
-                //                           "daily_impressions_max"=>2721.79,
-                //                           "daily_impressions_average"=>2474.35,
-                //                           "daily_clicks_min"=>175.85,
-                //                           "daily_clicks_max"=>214.93,
-                //                           "daily_clicks_average"=>195.39,
-                //                           "daily_cost_min"=>809.47,
-                //                           "daily_cost_max"=>989.36,
-                //                           "daily_cost_average"=>899.41
-                //                         )
-                //                       ),
-                //                       "depth"=> 0,
-                //                       "related_keywords"=>
-                //                       array(
-                //                         0=> "cricket score",
-                //                         1=> "cricket live",
-                //                         2=>  "live cricket score cricbuzz",
-                //                         3=> "cricket live score",
-                //                         4=> "cricket news",
-                //                         5=> "live cricket online",
-                //                         6=>  "cricket live video",
-                //                         7=>  "cricket india"
-                //                       )
-                //                     )
-                                    
-                //                   )
-                //                 )
-                //               )
-                //       )
-                //   )
-                // );
+                //---end related_keyword API parameter-----
+
+                //---start keyword_idea API parameter-----
+                // $result = $client->post('/v3/dataforseo_labs/keyword_ideas/live', $post_array);
+                //---end keyword_idea API parameter-----
+                // echo "<pre>";var_dump($result);die;
+                $res = $result['tasks'][0]['result'][0]['items'];
                 
-                
-                $res = $result['tasks'][0]['result'][0]['items'][0];
-               
                 if(!empty($res)){
                     $filename = slug($keyword.'-'.date('Ymd')).'.txt';
                     if(file_exists('data/related-keywords/'.$filename)){
@@ -326,13 +177,52 @@ class Dashboard extends CI_Controller
                     }else{
                          $file = fopen('data/related-keywords/'.$filename,'a');
                     }
+                    //---------title and subtile code start---------
+                 //    $related_keywords_html = "<h3>Searche Related to ".$keyword."</h3><ul>";
+                    // $related_keywords = array();
+                    // $heading = array();
+                    // $subkeywords = array();
+                    //foreach ($res as $rows) {
+                        // var_dump($rows['keyword']."<br/>");
+                        // die;
+                        // $related_keywords_html .= '<li>'.$rows['keyword_data']['keyword'].'</li><ul>';
+                        // array_push($heading,strtoupper($rows['keyword_data']['keyword']));
+                        // $keyword_row = array();
+                        // if(!empty($rows['related_keywords'])){
+                        //     array_push($subkeywords, $rows['related_keywords']);
+                        //     foreach ($rows['related_keywords'] as $row1) {
+                        //         $related_keywords_html .= "<li>".$row1."</li>";
+                        //         array_push($keyword_row,$row1);
+                        //     }
+                        // }else{
+                        //     array_push($subkeywords, array(0 =>'',1 =>'',2=>'',3=>'',4=>'',5=>'',6=>'',7=>''));
+                        // }
+                        // array_push($related_keywords, array($rows['keyword_data']['keyword'] => $keyword_row));
+                        // $related_keywords_html .="</ul>";
+                    //}
+                    //$related_keywords_html .="</ul>";
+                    // $header = $heading; 
+                    // fputcsv($file, $header,"|");
+                    // $rowwisedata = $this->flip_row_col_array($subkeywords);
+                    // foreach($rowwisedata as $row){ 
+                    //     fputcsv($file,$row,"|"); 
+                    // }
+                    // fclose($file);
+                    //--------title and subtile code end-------------
 
+                    //---- start related_keyword API display only first related---
                     $related_keywords_html .= "<h3>Searche Related to ".$keyword."</h3><ul>";
-                    $related_keywords_html .= '<li>'.$res['keyword_data']['keyword'].'</li><ul>';
-                    $related_keywords = isset($res['related_keywords']) ? $res['related_keywords'] : array('');
-
-                    // var_dump($related_keywords);die;
-
+                    $i=0;
+                    $related_keywords = array();
+                    $notmatch_related_keywords = array();
+                    foreach ($res as $row) {
+                        if(strtolower($row['keyword_data']['keyword']) == strtolower($keyword)){
+                            $related_keywords = $row['related_keywords'];
+                            break;
+                        }
+                        array_push($notmatch_related_keywords,$row['keyword_data']['keyword']);
+                        $i++;
+                    }
                     if(!empty($related_keywords)){
                         foreach ($related_keywords as $rows) {
                             $related_keywords_html .='<li>'.$rows.'</li>';
@@ -340,15 +230,46 @@ class Dashboard extends CI_Controller
                         
                         fputcsv($file,$related_keywords,'|');
                         fclose($file); 
+                    }else{
+                        if(!empty($notmatch_related_keywords)){
+                            foreach ($notmatch_related_keywords as $rows) {
+                                $related_keywords_html .='<li>'.$rows.'</li>';
+                            }
+                            
+                            fputcsv($file,$notmatch_related_keywords,'|');
+                            fclose($file); 
+                        }else{
+                            echo json_encode(array("result" => false,"data" => "<p style='color:red;'>API not give any responce for  related searche Keyword : \"".$keyword."\"</p>"));
+                            return;
+                        }
                     }
                     $related_keywords_html .="</ul>";
-                    $related_keywords_html .="</ul>";
+                   
+                    //---- end related_keyword API display only first related---
 
+                    //---start keyword_idea API call display all keyword---
+                    // $related_keywords_html .= "<h3>Searche Related to ".$keyword."</h3><ul>";
+                    // if(!empty($res)){
+                    //     $keywordstore = array();
+                    //     foreach ($res as $rows) {
+                    //         $related_keywords_html .='<li>'.$rows['keyword'].'</li>';
+                    //         array_push($keywordstore,$rows['keyword']);
+                    //     }
+                    //     fputcsv($file,$keywordstore,'|');
+                    //     fclose($file); 
+                    // }
+                    // $related_keywords_html .="</ul>";
+                    //---end keyword_idea API call display all keyword---
+
+                    
                     //row enrty added
                     $mainfile = 'data/main_relatedkeywords.txt';
                     $mainrecord = fopen($mainfile, 'a');
                     fputcsv($mainrecord,array($keyword,$filename),"|");
                     fclose($mainrecord);
+                }else{
+                    echo json_encode(array("result" => false,"data" => "<p style='color:red;'>API not give any responce for  related searche Keyword : \"".$keyword."\"</p>"));
+                    return;
                 }
 
                 echo json_encode(array("result" => true,"data" => $related_keywords_html));
