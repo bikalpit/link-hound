@@ -155,6 +155,7 @@
               $(".loader-wrapper").fadeOut("slow");
               $('#submit').attr('disabled', false);
               var jsonResults =  JSON.parse(res);
+              console.log(jsonResults.api_responce);
               if(jsonResults.result){
                 $("#result").html(jsonResults.data);
                 index();

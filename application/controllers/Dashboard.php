@@ -142,7 +142,7 @@ class Dashboard extends CI_Controller
                 "keyword" => $keyword,
                 "language_name" => "English",
                 "location_name" => 'United States',
-                "order_by" => ["relevance,desc"]
+                "order_by" => ["keyword_data.keyword,desc"]
                 //---end related_keyword API parameter-----
 
                 //---start keyword_idea API parameter-----
@@ -162,6 +162,7 @@ class Dashboard extends CI_Controller
                 
                 //---start related_keyword API parameter-----
                 $result = $client->post('/v3/dataforseo_labs/related_keywords/live', $post_array);
+                // var_dump($result);die;
                 //---end related_keyword API parameter-----
 
                 //---start keyword_idea API parameter-----
@@ -239,7 +240,7 @@ class Dashboard extends CI_Controller
                             fputcsv($file,$notmatch_related_keywords,'|');
                             fclose($file); 
                         }else{
-                            echo json_encode(array("result" => false,"data" => "<p style='color:red;'>API not give any responce for  related searche Keyword : \"".$keyword."\"</p>"));
+                            echo json_encode(array("result" => false,"data" => "<p style='color:red;'>API not give any responce for  related searche Keyword : \"".$keyword."\"</p>","api_responce"=>$res));
                             return;
                         }
                     }
@@ -268,18 +269,18 @@ class Dashboard extends CI_Controller
                     fputcsv($mainrecord,array($keyword,$filename),"|");
                     fclose($mainrecord);
                 }else{
-                    echo json_encode(array("result" => false,"data" => "<p style='color:red;'>API not give any responce for  related searche Keyword : \"".$keyword."\"</p>"));
+                    echo json_encode(array("result" => false,"data" => "<p style='color:red;'>API not give any responce for  related searche Keyword : \"".$keyword."\"</p>","api_responce"=>$res));
                     return;
                 }
 
-                echo json_encode(array("result" => true,"data" => $related_keywords_html));
+                echo json_encode(array("result" => true,"data" => $related_keywords_html,"api_responce"=>$res));
                 return;
 
             } catch (RestClientException $e) {
                // echo "\n";// print "HTTP code: {$e->getHttpCode()}\n";
                // print "Error code: {$e->getCode()}\n";// print "Message: {$e->getMessage()}\n";// print  $e->getTraceAsString();// echo "\n";
 
-               echo json_encode(array("result" => false,"data" => "<p style='color:red;'>Your API login and API password expired.</p>"));
+               echo json_encode(array("result" => false,"data" => "<p style='color:red;'>Your API login and API password expired.</p>","api_responce"=>''));
                return;
             }
         }
