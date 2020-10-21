@@ -142,7 +142,7 @@ class Dashboard extends CI_Controller
                 "keyword" => $keyword,
                 "language_name" => "English",
                 "location_name" => 'United States',
-                "order_by" => ["keyword_data.keyword,desc"]
+                "order_by" => ["relevance,desc"]
                 //---end related_keyword API parameter-----
 
                 //---start keyword_idea API parameter-----
